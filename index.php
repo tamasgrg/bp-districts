@@ -77,20 +77,10 @@ function processDistrictArray($queueData, $endDistrictData) {
   processDistrictArray($queue, $endDistrictData);
 }
 
-if (isset($_POST['submit'])) {
+if (isset($_POST["submit"])) {
   $startDistrict = $_POST["start"];
   $endDistrict = $_POST["end"];
 
   echo getShortestPath($startDistrict, $endDistrict) . " kerületen kell áthaladni.";
-
-  $conn = mysqli_connect('localhost', 'user', 'password', 'bp_districts');
-  if (!$conn) {
-    echo nl2br("\n Adatbázis hiba!");
-  }
-  $sql = "INSERT INTO results(start,end,result) VALUES('$startDistrict', '$endDistrict', '$result')";
-  if (mysqli_query($conn, $sql)) {
-    echo nl2br("\n \n Az eredményt sikeresen elmentettük az adatbázisba.");
-  }
 }
-
 ?>
