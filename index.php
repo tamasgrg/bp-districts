@@ -1,7 +1,20 @@
-<?php
+<html>
+  <body>
+    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+      <p>Kérjük, adja meg, melyik budapesti kerületből melyikbe szeretne eljutni!</p>
+      <label for="start">Indulás:</label><br>
+      <input type="number" id="start" name="start" min="1" max="23"><br>
+      <label for="end">Érkezés:</label><br>
+      <input type="number" id="end" name="end" min="1" max="23"><br>
+      <input type="submit" name="submit" value="OK">
+      <p>
 
-$startDistrict = $_POST["start"];
-$endDistrict = $_POST["end"];
+      </p>
+    </form>
+  </body>
+</html>
+
+<?php
 
 $districts = [
   [2, 5, 11, 12],
@@ -68,6 +81,10 @@ function processDistrictArray($queueData, $endDistrictData) {
   processDistrictArray($queue, $endDistrictData);
 }
 
-echo getShortestPath($startDistrict, $endDistrict) . " kerületen kell áthaladni.";
+if (isset($_POST['submit'])) {
+  $startDistrict = $_POST["start"];
+  $endDistrict = $_POST["end"];
+  echo getShortestPath($startDistrict, $endDistrict) . " kerületen kell áthaladni.";
+}    
 
 ?>
