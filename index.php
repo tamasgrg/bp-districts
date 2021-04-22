@@ -7,9 +7,6 @@
       <label for="end">Érkezés:</label><br>
       <input type="number" id="end" name="end" min="1" max="23"><br>
       <input type="submit" name="submit" value="OK">
-      <p>
-
-      </p>
     </form>
   </body>
 </html>
@@ -48,9 +45,7 @@ $result;
 
 function getShortestPath($startDistrict, $endDistrict) {
   global $result;
-
-  $queue = [];
-  $queue[] = $startDistrict;
+  $queue = [$startDistrict];
   processDistrictArray($queue, $endDistrict);
   return $result;
 }
@@ -78,13 +73,24 @@ function processDistrictArray($queueData, $endDistrictData) {
 
   $queue = $neighborDistricts;
   $steps++;
+
   processDistrictArray($queue, $endDistrictData);
 }
 
 if (isset($_POST['submit'])) {
   $startDistrict = $_POST["start"];
   $endDistrict = $_POST["end"];
+
   echo getShortestPath($startDistrict, $endDistrict) . " kerületen kell áthaladni.";
-}    
+
+  $conn = mysqli_connect('localhost', 'user', 'password', 'bp_districts');
+  if (!$conn) {
+    echo nl2br("\n Adatbázis hiba!");
+  }
+  $sql = "INSERT INTO results(start,end,result) VALUES('$startDistrict', '$endDistrict', '$result')";
+  if (mysqli_query($conn, $sql)) {
+    echo nl2br("\n \n Az eredményt sikeresen elmentettük az adatbázisba.");
+  }
+}
 
 ?>
