@@ -1,6 +1,6 @@
 <html>
   <body>
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
       <p>Kérjük, adja meg, melyik budapesti kerületből melyikbe szeretne eljutni!</p>
       <label for="start">Indulás:</label><br>
       <input type="number" id="start" name="start" min="1" max="23"><br>
@@ -13,7 +13,11 @@
 
 <?php
 
-$districts = [
+spl_autoload_register(function ($class_name) {
+  include $class_name . '.php';
+});
+
+$districtDataInput = [
   [2, 5, 11, 12],
   [1, 3, 5, 12, 13],
   [2, 4, 13],
@@ -39,48 +43,14 @@ $districts = [
   [18, 20, 21],
 ];
 
-$visited = [];
-$steps = 0;
-$result;
-
-function getShortestPath($startDistrict, $endDistrict) {
-  global $result;
-  $queue = [$startDistrict];
-  processDistrictArray($queue, $endDistrict);
-  return $result;
-}
-
-function processDistrictArray($queueData, $endDistrictData) {
-  global $districts;
-  global $visited;
-  global $steps;
-  global $result;
-
-  $neighborDistricts = [];
-  
-  foreach ($queueData as $district) {
-    if (in_array($district, $visited) == false) {
-      if ($district == $endDistrictData) {
-        $result = $steps;
-        return;
-      }
-      else {
-        $visited[] = $district;
-        array_push($neighborDistricts, ...$districts[$district - 1]);
-      }
-    }
-  }
-
-  $queue = $neighborDistricts;
-  $steps++;
-
-  processDistrictArray($queue, $endDistrictData);
-}
-
 if (isset($_POST["submit"])) {
-  $startDistrict = $_POST["start"];
-  $endDistrict = $_POST["end"];
+  $startDistrictId = $_POST["start"];
+  $endDistrictId = $_POST["end"];
 
-  echo getShortestPath($startDistrict, $endDistrict) . " kerületen kell áthaladni.";
+  $pathFinder = new PathFinder($districtDataInput, $startDistrictId, $endDistrictId);
+  $pathFinder->findShortestPath();
+  $result = $pathFinder->stepCount;
+  echo $result . " kerületen kell áthaladni.";
 }
+
 ?>
