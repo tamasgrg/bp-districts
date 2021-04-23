@@ -1,4 +1,4 @@
-!Feladat:
+- Feladat:
 
 Budapest hány kerületén kell keresztül mennünk ahhoz, hogy eljussunk az egyik kerületből a másikba? 
 Két kerület közötti "távolság" egyenlő a legkevesebb köztük lévő kerületek számával +1.
@@ -15,10 +15,10 @@ Opcionális kiegészítő feladat:
 A kapott eredményeket egy MySQL táblába tároljuk el, a számítás időpontjával, bemeneti és kimeneti értékeivel.
 
 
-!Megoldás:
+- Megoldás:
 
 A kerületeket és szomszédaikat egy kétdimenziós tömbben ábrázoltam (ahol $districtDataInput[0] jelenti az 1. kerület szomszédos kerületeit, stb.).
 A megoldáshoz egy Breadth-first Search rekurzív algoritmust használtam.
 A kapott eredményeket egy MySQL adatbázisban tároltam.
 
-!Kipróbálható: https://bp-districts.herokuapp.com/ (adatbázis-kapcsolat nélkül)
+- Kipróbálható: https://bp-districts.herokuapp.com/ (adatbázis-kapcsolat nélkül)
