@@ -1,6 +1,6 @@
 <html>
   <body>
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
       <p>Kérjük, adja meg, melyik budapesti kerületből melyikbe szeretne eljutni!</p>
       <label for="start">Indulás:</label><br>
       <input type="number" id="start" name="start" min="1" max="23"><br>
@@ -13,7 +13,11 @@
 
 <?php
 
-$districts = [
+spl_autoload_register(function ($class_name) {
+  include $class_name . '.php';
+});
+
+$districtDataInput = [
   [2, 5, 11, 12],
   [1, 3, 5, 12, 13],
   [2, 4, 13],
@@ -39,57 +43,28 @@ $districts = [
   [18, 20, 21],
 ];
 
-$visited = [];
-$steps = 0;
-$result;
+if (isset($_POST["submit"])) {
+  $startDistrictId = $_POST["start"];
+  $endDistrictId = $_POST["end"];
 
-function getShortestPath($startDistrict, $endDistrict) {
-  global $result;
-  $queue = [$startDistrict];
-  processDistrictArray($queue, $endDistrict);
-  return $result;
-}
+  $pathFinder = new PathFinder($districtDataInput, $startDistrictId, $endDistrictId);
+  $pathFinder->findShortestPath();
+  $result = $pathFinder->stepCount;
+  echo $result . " kerületen kell áthaladni.";
 
-function processDistrictArray($queueData, $endDistrictData) {
-  global $districts;
-  global $visited;
-  global $steps;
-  global $result;
+  $date = date('Y-m-d H:i:s');
 
-  $neighborDistricts = [];
-  
-  foreach ($queueData as $district) {
-    if (in_array($district, $visited) == false) {
-      if ($district == $endDistrictData) {
-        $result = $steps;
-        return;
-      }
-      else {
-        $visited[] = $district;
-        array_push($neighborDistricts, ...$districts[$district - 1]);
-      }
-    }
-  }
-
-  $queue = $neighborDistricts;
-  $steps++;
-
-  processDistrictArray($queue, $endDistrictData);
-}
-
-if (isset($_POST['submit'])) {
-  $startDistrict = $_POST["start"];
-  $endDistrict = $_POST["end"];
-
-  echo getShortestPath($startDistrict, $endDistrict) . " kerületen kell áthaladni.";
-
-  $conn = mysqli_connect('localhost', 'user', 'password', 'bp_districts');
+  $conn = mysqli_connect('localhost', 'root', 'password', 'bp_districts');
   if (!$conn) {
     echo nl2br("\n Adatbázis hiba!");
   }
-  $sql = "INSERT INTO results(start,end,result) VALUES('$startDistrict', '$endDistrict', '$result')";
+
+  $sql = "INSERT INTO results(start,end,result,time) VALUES('$startDistrictId', '$endDistrictId', '$result', '$date')";
+  
   if (mysqli_query($conn, $sql)) {
     echo nl2br("\n \n Az eredményt sikeresen elmentettük az adatbázisba.");
+  } else {
+    echo nl2br("\n \n Az eredményt nem sikerült elmentenünk az adatbázisba.");
   }
 }
 
