@@ -1,17 +1,9 @@
-<html>
-  <body>
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-      <p>Kérjük, adja meg, melyik budapesti kerületből melyikbe szeretne eljutni!</p>
-      <label for="start">Indulás:</label><br>
-      <input type="number" id="start" name="start" min="1" max="23"><br>
-      <label for="end">Érkezés:</label><br>
-      <input type="number" id="end" name="end" min="1" max="23"><br>
-      <input type="submit" name="submit" value="OK">
-    </form>
-  </body>
-</html>
-
 <?php
+
+//Please, provide your parameters here!
+$startDistrict = 2;
+$endDistrict = 11;
+//
 
 $districts = [
   [2, 5, 11, 12],
@@ -47,6 +39,7 @@ function getShortestPath($startDistrict, $endDistrict) {
   global $result;
   $queue = [$startDistrict];
   processDistrictArray($queue, $endDistrict);
+  storeResult($startDistrict, $endDistrict, $result);
   return $result;
 }
 
@@ -77,20 +70,16 @@ function processDistrictArray($queueData, $endDistrictData) {
   processDistrictArray($queue, $endDistrictData);
 }
 
-if (isset($_POST['submit'])) {
-  $startDistrict = $_POST["start"];
-  $endDistrict = $_POST["end"];
+function storeResult($startDistrict, $endDistrict, $data) {
+  $conn = mysqli_connect('localhost', 'root', 'password', 'bp_districts');
+  $date = date('Y-m-d H:i:s');
 
-  echo getShortestPath($startDistrict, $endDistrict) . " kerületen kell áthaladni.";
+  $sql = "INSERT INTO results(start,end,result,time) VALUES('$startDistrict', '$endDistrict', '$data', '$date')";
 
-  $conn = mysqli_connect('localhost', 'user', 'password', 'bp_districts');
-  if (!$conn) {
-    echo nl2br("\n Adatbázis hiba!");
-  }
-  $sql = "INSERT INTO results(start,end,result) VALUES('$startDistrict', '$endDistrict', '$result')";
-  if (mysqli_query($conn, $sql)) {
-    echo nl2br("\n \n Az eredményt sikeresen elmentettük az adatbázisba.");
-  }
+  mysqli_query($conn, $sql);
 }
+
+$result = getShortestPath($startDistrict, $endDistrict);
+echo $result . " kerületen kell áthaladni.";
 
 ?>
