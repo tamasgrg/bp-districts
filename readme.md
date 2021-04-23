@@ -21,4 +21,6 @@ A kerületeket és szomszédaikat egy kétdimenziós tömbben ábrázoltam (ahol
 A megoldáshoz egy Breadth-first Search rekurzív algoritmust használtam.
 A kapott eredményeket egy MySQL adatbázisban tároltam.
 
-- Kipróbálható: https://bp-districts.herokuapp.com/ (adatbázis-kapcsolat nélkül)
+- Kipróbálható:
+
+https://bp-districts.herokuapp.com/ (adatbázis-kapcsolat nélkül)
